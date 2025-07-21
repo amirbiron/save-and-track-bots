@@ -1,22 +1,22 @@
-# main.py - מאחד את Save-me ואת Sabscriber-tracking עם טוקנים נפרדים
+# main.py
 import asyncio
 import os
+from multiprocessing import Process
 from save_me import main as save_me_main
 from subscriber_tracking import main as subscriber_tracking_main
 
-async def run_save_me():
+def run_save_me():
     os.environ["BOT_TOKEN"] = os.environ.get("BOT_TOKEN_SAVE_ME", "")
-    await asyncio.to_thread(save_me_main)
+    save_me_main()
 
-async def run_subs_tracker():
+def run_subs_tracker():
     os.environ["BOT_TOKEN"] = os.environ.get("BOT_TOKEN_SUBS_TRACK", "")
-    await asyncio.to_thread(subscriber_tracking_main)
-
-async def run_all():
-    await asyncio.gather(
-        run_save_me(),
-        run_subs_tracker()
-    )
+    subscriber_tracking_main()
 
 if __name__ == "__main__":
-    asyncio.run(run_all())
+    p1 = Process(target=run_save_me)
+    p2 = Process(target=run_subs_tracker)
+    p1.start()
+    p2.start()
+    p1.join()
+    p2.join()
