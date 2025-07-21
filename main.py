@@ -1,22 +1,23 @@
-# main.py
 import asyncio
 import os
-from multiprocessing import Process
 from save_me import main as save_me_main
 from subscriber_tracking import main as subscriber_tracking_main
 
-def run_save_me():
+async def run_save_me():
     os.environ["BOT_TOKEN"] = os.environ.get("BOT_TOKEN_SAVE_ME", "")
-    save_me_main()
+    os.environ["MONGO_URI"] = os.environ.get("MONGO_URI")  # סביר שזה כבר קיים שם
+    await asyncio.to_thread(save_me_main)
 
-def run_subs_tracker():
+async def run_subs_tracker():
     os.environ["BOT_TOKEN"] = os.environ.get("BOT_TOKEN_SUBS_TRACK", "")
-    subscriber_tracking_main()
+    os.environ["MONGO_URI"] = os.environ.get("MONGO_URI")  # נוסיף לו גם גישה
+    await asyncio.to_thread(subscriber_tracking_main)
+
+async def run_all():
+    await asyncio.gather(
+        run_save_me(),
+        run_subs_tracker()
+    )
 
 if __name__ == "__main__":
-    p1 = Process(target=run_save_me)
-    p2 = Process(target=run_subs_tracker)
-    p1.start()
-    p2.start()
-    p1.join()
-    p2.join()
+    asyncio.run(run_all())
