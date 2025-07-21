@@ -19,6 +19,7 @@ logger = logging.getLogger(__name__)
 # --- קבועים ומשתני סביבה ---
 TOKEN = os.environ.get("BOT_TOKEN")
 MONGO_URI = os.environ.get("MONGO_URI")
+print("🔍 Mongo URI:", MONGO_URI)
 PORT = int(os.environ.get("PORT", 8080))
 
 # --- הגדרת מסד הנתונים ---
